@@ -1,0 +1,14 @@
+{
+    "name": "owlon/phprestapi",
+    "authors": [
+        {
+            "name": "Owlondrugs"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "app\\": "./"
+        }
+    }
+}
