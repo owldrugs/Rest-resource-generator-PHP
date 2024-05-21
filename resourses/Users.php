@@ -50,7 +50,7 @@ class Users
     }
     public function post(){
         echo json_encode($this->users);
-        //todo
+        $result = $this->db->insert();
     }
     public function put($id){
         echo json_encode($this->users[$id-1]);
