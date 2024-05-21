@@ -57,7 +57,13 @@ class Database
         $querry->bindParam(4,$arr['password']);
         //todo
     }
-    public function update(){
+    public function update($id){
+        $sql = "UPDATE `users` SET name=?,age=?,login=?,password=? WHERE `id` = '$id'";
+        $querry = $this->conn->prepare($sql);
+        $querry->bindParam(1,$arr['name']);
+        $querry->bindParam(2,$arr['age']);
+        $querry->bindParam(3,$arr['login']);
+        $querry->bindParam(4,$arr['password']);
         //todo
     }
     public function delete($id){
