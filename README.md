@@ -1,4 +1,4 @@
-# **Rest-resource-generator-PHP**
+# **Simple rest-resource-generator-PHP(OOP)**
 Simple rest resource generator
 
 **App create**<br>
