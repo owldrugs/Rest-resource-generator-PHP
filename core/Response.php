@@ -4,8 +4,16 @@ namespace app\core;
 
 class Response
 {
-    private $statusCode;
-    private $header;
-    private $body;
-    //TODO ответ
+    public static function send($code=404,$typeOfMessage=false,$data=false){
+        http_response_code($code);
+        if ($typeOfMessage && $data){
+            if ($typeOfMessage=='html'){
+                echo $data;
+            }
+            elseif ($typeOfMessage=='json'){
+                echo json_encode($data);
+            }
+        }
+        exit();
+    }
 }

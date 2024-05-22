@@ -2,68 +2,76 @@
 
 namespace app\resourses;
 
+use app\core\Response;
 use app\database\Database;
 
 class Users
 {
     private Database $db;
-    private $name;
-    private $age;
-    private $login;
-    private $password;
-    private $users = [
-        ['id'=>1,'name'=>'viktor','age'=>24,'login'=>'ViktorLogin','password'=>'ViktorPass'],
-        ['id'=>2,'name'=>'viktor','age'=>24,'login'=>'ViktorLogin','password'=>'ViktorPass'],
-        ['id'=>3,'name'=>'viktor','age'=>24,'login'=>'ViktorLogin','password'=>'ViktorPass'],
-        ['id'=>4,'name'=>'viktor','age'=>24,'login'=>'ViktorLogin','password'=>'ViktorPass'],
-        ['id'=>5,'name'=>'viktor','age'=>24,'login'=>'ViktorLogin','password'=>'ViktorPass'],
-    ];
+
     public function __construct()
     {
         $this->db = new Database('users');
     }
 
-    public function getAll(): void
+    public function getAll($data=[]): void
     {
         $result = $this->db->getAll();
         if ($result){
-            http_response_code(200);
-            echo json_encode($result);
+            Response::send(200,'json',$result);
         }
         else{
-            echo 'Нет записей';
-            http_response_code(404);
+            Response::send(404,'html','Нет записей');
         }
 
     }
-    public function get($id): void
+    public function get($id,$data=[]): void
     {
         $result = $this->db->get($id);
         if ($result){
-            http_response_code(200);
-            echo json_encode($result);
+            Response::send(200,'json',$result);
         }
         else{
-            echo 'Нет записей';
-            http_response_code(404);
+            Response::send(404,'html','Пользователь не найден');
         }
     }
-    public function post(){
-        echo json_encode($this->users);
-        $result = $this->db->insert();
+    public function post($data=[]): void
+    {
+        if ($data){
+            $result = $this->db->insert($data,["name","age","login","password"]);
+        }
+
+        if ($result){
+            Response::send(200,'html','Пользователь добавлен');
+        }
+        else
+        {
+            Response::send(404,'html','Нет данных для добавления или пользователь не существует');
+        }
     }
-    public function put($id){
-        echo json_encode($this->users[$id-1]);
-        //todo
+    public function put($id,$data=[]): void
+    {
+        if ($data){
+            $result = $this->db->update($id,$data,["name","age","login","password"]);
+        }
+
+
+        if ($result){
+            Response::send(200,'html','Пользователь обновлен');
+        }
+        else
+        {
+            Response::send(404,'html','Нет данных для добавления или пользователь не существует');
+        }
     }
-    public function delete($id){
+    public function delete($id,$data=[]): void
+    {
         $result = $this->db->delete($id);
         if ($result){
-            http_response_code(200);
+            Response::send(200,'html','Пользователь удален');
         }
         else{
-            echo 'Нет записей';
-            http_response_code(404);
+            Response::send(404,'html','Пользователь не существует');
         }
     }
 }

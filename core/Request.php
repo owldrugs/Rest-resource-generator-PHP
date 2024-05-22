@@ -12,7 +12,7 @@ class Request
     }
     public function getUriExploded(): array
     {
-        return explode('/',$_SERVER['REQUEST_URI']);
+        return explode('/',$this->getUri());
     }
 
 }

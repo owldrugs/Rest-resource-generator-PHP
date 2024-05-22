@@ -43,13 +43,15 @@ class Router
         $uriResolve = $this->uriResolve($uriExploded);
         $id = $uriExploded[2]??false;
         if (isset($this->routes[$uriExploded[1]][$method][$uriResolve])){
+            $data = UserInput::getAnyData();
+            $data = $data?:[];
             $this->routes[$uriExploded[1]][$method][$uriResolve][0] = new $this->routes[$uriExploded[1]][$method][$uriResolve][0]();
             header('Content-Type: application/json; charset=utf-8');
             if ($id){
-                call_user_func($this->routes[$uriExploded[1]][$method][$uriResolve],$id);
+                call_user_func($this->routes[$uriExploded[1]][$method][$uriResolve],$id,$data);
             }
             else{
-                call_user_func($this->routes[$uriExploded[1]][$method][$uriResolve]);
+                call_user_func($this->routes[$uriExploded[1]][$method][$uriResolve],$data);
             }
 
         }

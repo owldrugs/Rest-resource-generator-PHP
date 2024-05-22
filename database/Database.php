@@ -48,34 +48,87 @@ class Database
         }
     }
 
-    public function  insert($arr = []){
-        $sql = "INSERT INTO `$this->table` (name, age, login, password) VALUES (?,?,?,?)";
+    public function  insert($data = [],$fields=[]): bool
+    {
+        $q = str_repeat('?',count($fields));
+        $q = str_split($q);
+
+        $sql = "INSERT INTO `$this->table` (".implode(',',$fields).") VALUES (".implode(',',$q).")";
         $querry = $this->conn->prepare($sql);
-        $querry->bindParam(1,$arr['name']);
-        $querry->bindParam(2,$arr['age']);
-        $querry->bindParam(3,$arr['login']);
-        $querry->bindParam(4,$arr['password']);
-        //todo
+
+        if (!empty($data)){
+            for ($i = 1; $i < count($fields)+1; $i++) {
+                $querry->bindParam($i,$data[$fields[$i-1]]);
+            }
+            $querry->execute();
+            return true;
+        }
+        else{
+            return false;
+        }
     }
-    public function update($id){
-        $sql = "UPDATE `users` SET name=?,age=?,login=?,password=? WHERE `id` = '$id'";
-        $querry = $this->conn->prepare($sql);
-        $querry->bindParam(1,$arr['name']);
-        $querry->bindParam(2,$arr['age']);
-        $querry->bindParam(3,$arr['login']);
-        $querry->bindParam(4,$arr['password']);
-        //todo
+
+    public function update($id,$data = [],$fields=[]): bool
+    {
+        if ($this->checkId($id)){
+            $sql = "UPDATE `$this->table` SET ";
+            foreach ($fields as $field=>$value){
+                if ($field === array_key_last($fields)) {
+                    $sql.= "`$value`=? WHERE `id`='$id'";
+                }
+                else
+                {
+                    $sql.= "`$value`=?,";
+                }
+            }
+            $querry = $this->conn->prepare($sql);
+
+            if (!empty($data)){
+                for ($i = 1; $i < count($fields)+1; $i++) {
+                    $querry->bindParam($i,$data[$fields[$i-1]]);
+                }
+                $querry->execute();
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            return false;
+        }
     }
-    public function delete($id){
+    public function delete($id): bool
+    {
+        if ($this->checkId($id)){
+            $sql = "SELECT * FROM `$this->table` WHERE `id`='$id'";
+            $querry = $this->conn->prepare($sql);
+            $querry->execute();
+            $querry->rowCount();
+
+            if ($querry->rowCount()>0){
+                $sql = "DELETE FROM `$this->table` WHERE `id`='$id'";
+                $querry = $this->conn->prepare($sql);
+                $querry->execute();
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            return false;
+        }
+
+    }
+
+    public function checkId($id): bool
+    {
         $sql = "SELECT * FROM `$this->table` WHERE `id`='$id'";
         $querry = $this->conn->prepare($sql);
         $querry->execute();
-        $querry->rowCount();
-
-        if ($querry->rowCount()>0){
-          $sql = "DELETE FROM `$this->table` WHERE `id`='$id'";
-          $querry = $this->conn->prepare($sql);
-          $querry->execute();
+        $result = $querry->fetchAll(PDO::FETCH_ASSOC);
+        if (count($result)>0){
             return true;
         }
         else{

@@ -2,7 +2,8 @@
 require_once __DIR__.'/vendor/autoload.php';
 
 use app\api\Api;
+use app\resourses\Users;
 
 $api = new Api();
-$api->registerResourse('Users', \app\resourses\Users::class,['get','post','put','delete']);
+$api->registerResourse('Users', Users::class,['get','post','put','delete']);
 $api->run();
